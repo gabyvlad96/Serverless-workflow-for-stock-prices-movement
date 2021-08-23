@@ -1,0 +1,19 @@
+.container {
+  margin: 20px;
+  font-family: "Segoe UI", sans-serif;
+  text-align: center;
+  height: 100vh;
+}
+.dashboard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 80vh;
+}
+
+.chart-container {
+  margin-top: 4rem;
+  width: 80%;
+  height: 100%;
+}

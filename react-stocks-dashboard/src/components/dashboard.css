@@ -1,0 +1,43 @@
+.notificationPanel {
+    position: absolute;
+    top: 0;
+    right: 4rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.notificationPanel>div:nth-child(2) {
+    margin: 10px auto 5px 0;
+}
+
+.notificationPanel input {
+    width: 3rem;
+}
+
+.notificationPanel button {
+    width: 5rem;
+}
+
+.labelAndSwitch {
+    display: flex;
+    flex-direction: row;
+}
+
+.invalidLabel {
+    position: fixed;
+    color: red;
+    margin-left: 15px;
+    font-size: 13px;
+}
+
+.infoLabel {
+    font-size: 10px;
+    margin: 0 auto 7px 0;
+    width: 13rem;
+    text-align: left;
+    color: #555;
+}
+
+span {
+    margin-right: 15px;
+}
