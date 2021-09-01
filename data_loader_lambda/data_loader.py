@@ -4,28 +4,53 @@ import boto3
 from decimal import Decimal
 import datetime
 import requests
+from botocore.exceptions import ClientError
 
-finnhub_client = finnhub.Client(api_key="YOUR_ACCESS_KEY")
 dynamodb = boto3.resource('dynamodb')
 
 def lambda_handler(event, context):
+    finnhub_secret = json.loads(get_secret('finnhub'))
+    finnhub_client = finnhub.Client(api_key=finnhub_secret["finnhub_api_key"])
+    marketstack_secret = json.loads(get_secret('marketstack'))
+
     timeToPullHD = check_market_time()
-    print(timeToPullHD)
+    print('timeToPullHD: ' + str(timeToPullHD))
     if timeToPullHD:
         for symbol in ['AAPL', 'GME', 'PFE', 'AMC', 'AMZN', 'MSFT', 'BA', 'NVDA', 'AMD', 'SPCE']:
-            resp = put_historical_data(symbol) # ~2200ms
+            resp = put_historical_data(symbol, marketstack_secret) # ~2200ms
     
     for symbol in ['AAPL', 'GME', 'PFE', 'AMC', 'AMZN', 'MSFT', 'BA', 'NVDA', 'AMD', 'SPCE']:
-        put_data(symbol) # ~1500ms
+        put_data(symbol, finnhub_client) # ~1500ms
 
     return {
         "statusCode": 200,
         "body": "Success",
     }
 
-def put_data(symbol):
-    table = dynamodb.Table('Stock_prices')
-    stock_info = finnhub_client.quote(symbol)
+def get_secret(provider):
+    secret_name = "prod/data_loader/" + provider
+    region_name = "us-east-1"
+    session = boto3.session.Session()
+    client = session.client(
+        service_name='secretsmanager',
+        region_name=region_name
+    )
+
+    try:
+        get_secret_value_response = client.get_secret_value(
+            SecretId=secret_name
+        )
+    except ClientError as e:
+        raise e
+    else:
+        if 'SecretString' in get_secret_value_response:
+            return get_secret_value_response['SecretString']
+        else:
+            return base64.b64decode(get_secret_value_response['SecretBinary'])
+
+def put_data(symbol, client):
+    table = dynamodb.Table('Stock_Prices')
+    stock_info = client.quote(symbol)
 
     response = table.update_item(
         Key={
@@ -45,9 +70,9 @@ def check_market_time():
     end = datetime.time(19,51)
     return start <= now <= end
     
-def put_historical_data(symbol):
+def put_historical_data(symbol, secret):
     table = dynamodb.Table('Historical_data')
-    params = {'access_key': 'YOUR_ACCESS_KEY'}
+    params = {'access_key': secret["marketstack_api_key"]}
     currentDate = datetime.datetime.now().date().isoformat()
 
     api_result = requests.get('http://api.marketstack.com/v1/eod?&symbols=' + symbol + '&date_from=2021-07-15&date_to=' +

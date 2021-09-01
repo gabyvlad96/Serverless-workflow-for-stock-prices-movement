@@ -33,6 +33,11 @@
             "sqs:GetQueueAttributes"
         ],
         "Resource": "${sqsQueueArn}"
+    },
+    {
+        "Effect": "Allow",
+        "Action": "secretsmanager:GetSecretValue",
+        "Resource": "*"
     }
     ]
   }
