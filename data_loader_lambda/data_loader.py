@@ -49,7 +49,7 @@ def get_secret(provider):
             return base64.b64decode(get_secret_value_response['SecretBinary'])
 
 def put_data(symbol, client):
-    table = dynamodb.Table('Stock_Prices')
+    table = dynamodb.Table('Stock_prices')
     stock_info = client.quote(symbol)
 
     response = table.update_item(
