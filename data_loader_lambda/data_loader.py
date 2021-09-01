@@ -66,8 +66,8 @@ def put_data(symbol, client):
 
 def check_market_time():
     now = datetime.datetime.now().time()
-    start = datetime.time(19,50)
-    end = datetime.time(19,51)
+    start = datetime.time(21,50)
+    end = datetime.time(21,51)
     return start <= now <= end
     
 def put_historical_data(symbol, secret):
