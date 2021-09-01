@@ -22,12 +22,11 @@ Stocks data is provided using the free-plans of these two APIS: Marketstack API 
     - Terraform CLI
     - [Finnhub](https://finnhub.io) and [Marketstack](https://marketstack.com) account to get the stocks data
 
-2. Replace secret keys for API services inside data_loader.py with your own
-    - also you need to add your own verified SES emails to `prices_processor.py`
+2. Add the API keys to your AWS Secret Manager
 
 2. Zip the python files
-    - Python files need to be zipped in order to be used and create the Lambda functions. Use `zip function_file_name.zip *` from inside the lambda function folder
-    - You need to do this for all three functions as well as install the third-party packages where needed. [Explanation here](https://stackoverflow.com/a/57531938/13746736)
+    - Python files need to be zipped in order to be used and create the Lambda functions.
+    - You need to do this for all three functions as well as install the third-party packages where needed.
     
 3. Deploy the stack
     - The current configuration uses a custom domain, so you can simply skip the Route53 configurations or use your own domain 
@@ -37,6 +36,5 @@ Stocks data is provided using the free-plans of these two APIS: Marketstack API 
     - Build the React application using `npm build` and upload the files to AWS S3
     
     
-    
 ## About
-The application is solely built to put my AWS skills at work and to showcase my cloud knowledge. There are many optimizations that could be done to the point where the application can be reduced to a ReactJS application only. The point was to make use of as many AWS resources as possible to test my cloud architecture and knowledge while also maintaining close to 0 costs.
+The application is solely built to put my AWS skills at work and to showcase my cloud knowledge. There are many optimizations that could be done to the point where the application can be reduced to a ReactJS application only. The point was to make use of as many AWS resources as possible to test my cloud architecture knowledge while also maintaining close to 0 costs.
