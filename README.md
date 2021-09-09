@@ -11,7 +11,7 @@ The dashboard interface of the application is rather simple and easy to use, pro
 The architecture is composed mainly of three parts:
 - front-end - where the react app is served through AWS S3, Cloudwatch and Route53
 - back-end - the service is composed of a lambda function that servers the data to an endpoint using API Gateway
-- data-loader - this is a service that automatically scrapes data from two API sources and uploads it to AWS DynamoDB. It also can trigger automatic email alerts based on stocks price changes.
+- data-loader - this is a service that automatically scrapes data from two API sources and uploads it to AWS DynamoDB. It can also trigger automatic email alerts based on stock price changes.
 
 Stocks data is provided using the free-plans of these two APIS: Marketstack API and Finnhub Stock API. The data is then parsed and loaded into the DynamoDB database using `data_loader` Lambda function which is triggered at a rate of 1 minute by a CloudWatch Alarm. The database has also DynamoDB Streams enabled so it is possible to set up an alarm that is triggered by a price change in order to alert the user. Currently, only verified emails are allowed on AWS Simple Email Service(SES) so this feature has some limitations though, by building the architecture from the ground one can make use of this service.
 
