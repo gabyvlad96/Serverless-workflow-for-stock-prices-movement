@@ -37,4 +37,4 @@ Stocks data is provided using the free-plans of these two APIS: Marketstack API 
     
     
 ## About
-The application is solely built to put my AWS skills at work and to showcase my cloud knowledge. The point was to make use of as many AWS resources as possible to test my cloud architecture knowledge while also maintaining close to 0 costs.
+The application is solely built to put my AWS skills at work and to showcase my cloud knowledge. The objective was to make use of as many AWS resources as possible to test my cloud architecture knowledge while also maintaining close to 0 costs.
