@@ -18,15 +18,15 @@ def lambda_handler(event, context):
             res = turnoff_alarm(symbol)
     except Exception as e:
         print(e)
-        return "Error"
+        return 'Error'
         
     return {
-        "statusCode": 200,
-        "headers": {
-            "Access-Control-Allow-Origin": "*",
+        'statusCode': 200,
+        'headers': {
+            'Access-Control-Allow-Origin': '*',
         },
-        "body": json.dumps({
-            "message": res,
+        'body': json.dumps({
+            'message': res,
         })
     }
 
@@ -49,11 +49,11 @@ def update_alarm(symbol, price):
         Key={
             'symbol': symbol
         },
-        UpdateExpression="set price_alarm = :p",
+        UpdateExpression='set price_alarm = :p',
         ExpressionAttributeValues={
             ':p': price,
         },
-        ReturnValues="UPDATED_NEW"
+        ReturnValues='UPDATED_NEW'
     )
     return response
     
@@ -63,10 +63,10 @@ def turnoff_alarm(symbol):
         Key={
             'symbol': symbol
         },
-        UpdateExpression="set price_alarm = :p",
+        UpdateExpression='set price_alarm = :p',
         ExpressionAttributeValues={
             ':p': 'null',
         },
-        ReturnValues="UPDATED_NEW"
+        ReturnValues='UPDATED_NEW'
     )
     return response

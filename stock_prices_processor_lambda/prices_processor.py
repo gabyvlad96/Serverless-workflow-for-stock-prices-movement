@@ -14,7 +14,7 @@ def lambda_handler(event, context):
 		print(e)
 
 def handle_modify(record):
-	print("Handling MODIFY Event")
+	print('Handling MODIFY Event')
 	newImage = record['dynamodb']['NewImage']
 	oldImage = record['dynamodb']['OldImage']
 	symbol = newImage['symbol']
@@ -37,7 +37,7 @@ def handle_modify(record):
 			except ClientError as e:
 			    print(e.response['Error']['Message'])
 			else:
-			    print("Email sent! Message ID:"),
+			    print('Email sent! Message ID:'),
 			    print(response['MessageId'])
 
 		else:

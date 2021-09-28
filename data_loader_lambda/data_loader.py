@@ -10,7 +10,7 @@ dynamodb = boto3.resource('dynamodb')
 
 def lambda_handler(event, context):
     finnhub_secret = json.loads(get_secret('finnhub'))
-    finnhub_client = finnhub.Client(api_key=finnhub_secret["finnhub_api_key"])
+    finnhub_client = finnhub.Client(api_key=finnhub_secret['finnhub_api_key'])
     marketstack_secret = json.loads(get_secret('marketstack'))
 
     timeToPullHD = check_market_time()
@@ -23,13 +23,13 @@ def lambda_handler(event, context):
         put_data(symbol, finnhub_client) # ~1500ms
 
     return {
-        "statusCode": 200,
-        "body": "Success",
+        'statusCode': 200,
+        'body': 'Success',
     }
 
 def get_secret(provider):
-    secret_name = "prod/data_loader/" + provider
-    region_name = "us-east-1"
+    secret_name = 'prod/data_loader/' + provider
+    region_name = 'us-east-1'
     session = boto3.session.Session()
     client = session.client(
         service_name='secretsmanager',
@@ -56,11 +56,11 @@ def put_data(symbol, client):
         Key={
             'symbol': symbol
         },
-        UpdateExpression="set price = :p",
+        UpdateExpression='set price = :p',
         ExpressionAttributeValues={
             ':p': Decimal(str(stock_info['c'])),
         },
-        ReturnValues="UPDATED_NEW"
+        ReturnValues='UPDATED_NEW'
     )
     return response
 
@@ -72,7 +72,7 @@ def check_market_time():
     
 def put_historical_data(symbol, secret):
     table = dynamodb.Table('Historical_data')
-    params = {'access_key': secret["marketstack_api_key"]}
+    params = {'access_key': secret['marketstack_api_key']}
     currentDate = datetime.datetime.now().date().isoformat()
 
     api_result = requests.get('http://api.marketstack.com/v1/eod?&symbols=' + symbol + '&date_from=2021-07-15&date_to=' +
@@ -89,10 +89,10 @@ def put_historical_data(symbol, secret):
         Key={
             'symbol': symbol
         },
-        UpdateExpression="set hData = :d",
+        UpdateExpression='set hData = :d',
         ExpressionAttributeValues={
             ':d': json.dumps(finalData),
         },
-        ReturnValues="UPDATED_NEW"
+        ReturnValues='UPDATED_NEW'
     )
     return response
