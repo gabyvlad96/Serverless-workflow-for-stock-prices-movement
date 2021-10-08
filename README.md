@@ -9,7 +9,7 @@ The dashboard interface of the application is rather simple and easy to use, pro
 ![Diagram](https://github.com/gabyvlad96/Serverless-workflow-for-stock-prices-movement/blob/master/.github/architecture_diagram.png)
 
 The architecture is composed mainly of three parts:
-- front-end - where the react app is served through AWS S3, Cloudwatch and Route53
+- front-end - where the react app is served through AWS S3, Cloudfront and Route53
 - back-end - the service is composed of a lambda function that servers the data to an endpoint using API Gateway
 - data-loader - this is a service that automatically scrapes data from two API sources and uploads it to AWS DynamoDB. It can also trigger automatic email alerts based on stock price changes.
 
