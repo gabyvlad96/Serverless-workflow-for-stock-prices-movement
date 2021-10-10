@@ -7,6 +7,7 @@ import requests
 from botocore.exceptions import ClientError
 
 dynamodb = boto3.resource('dynamodb')
+HD_start_date = '2021-07-15'
 
 def lambda_handler(event, context):
     finnhub_secret = json.loads(get_secret('finnhub'))
@@ -75,8 +76,12 @@ def put_historical_data(symbol, secret):
     params = {'access_key': secret['marketstack_api_key']}
     currentDate = datetime.datetime.now().date().isoformat()
 
-    api_result = requests.get('http://api.marketstack.com/v1/eod?&symbols=' + symbol + '&date_from=2021-07-15&date_to=' +
-        str(currentDate), params)
+    try:
+        api_result = requests.get('http://api.marketstack.com/v1/eod?&symbols=' +
+        symbol + '&date_from=' + HD_start_date + '&date_to=' + str(currentDate), params)
+    except ClientError as e:
+        raise e
+    
     api_result = api_result.json()
     data = api_result['data']
 
