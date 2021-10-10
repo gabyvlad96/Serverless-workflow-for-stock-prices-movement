@@ -18,19 +18,18 @@ export default function App() {
 	const handleSelect = async (e) => {
 		let dataArr = [];
 		setsymbol(e.target.value);
-		await fetch(`${url}/shareprice?symbol=${e.target.value}`)
-			.then((res) => res.json())
-			.then((data) => {
-				dataArr = data['message']['hData'];
-				setprice(data['message']['price']);
-				if (data['message']['price_alarm'] === "null")
-					setpriceAlarm(null);
-				else
-					setpriceAlarm(data['message']['price_alarm'])
-			})
-			.catch((error) => {
-				console.error('Error:', error);
-			});
+		let response = await fetch(`${url}/shareprice?symbol=${e.target.value}`);
+		if (!response.ok) {
+			throw new Error(`HTTP error! status: ${response.status}`);
+		}
+		let data = await response.json();
+		console.log(data);
+		dataArr = data['message']['hData'];
+		setprice(data['message']['price']);
+		if (data['message']['price_alarm'] === "null")
+			setpriceAlarm(null);
+		else
+			setpriceAlarm(data['message']['price_alarm'])
 		
 		let formattedData = formatData(dataArr);
 		setpastData(formattedData);

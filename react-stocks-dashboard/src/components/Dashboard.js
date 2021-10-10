@@ -40,7 +40,7 @@ function Dashboard({symbol, price, priceAlarm, data}) {
 		}
 	}
 
-	const submitValue = async (e) => {
+	const submitValue = (e) => {
 		if (isNaN(inputValue)) {
 			setvalidInput(false);
 			return
