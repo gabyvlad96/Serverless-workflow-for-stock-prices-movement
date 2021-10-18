@@ -1,46 +1,38 @@
 import React, { useState, useRef } from "react";
 import Dashboard from "./components/Dashboard";
 import { formatData } from "./utils";
+import { baseURL } from "./config/const";
 import "./styles.css";
+
+const STOCKS = ['AAPL', 'GME', 'PFE', 'AMC', 'AMZN', 'MSFT', 'BA', 'NVDA', 'AMD', 'SPCE'];
 
 export default function App() {
 	const [symbol, setsymbol] = useState("");
-	const [price, setprice] = useState("0.00");
+	const [price, setprice] = useState(0);
 	const [pastData, setpastData] = useState({});
 	const [priceAlarm, setpriceAlarm] = useState(null);
-	const ws = useRef(null);
 
-	let first = useRef(false);
-	const url = "API_GATEWAY_ENDPOINT";
-	const stocks = ['AAPL', 'GME', 'PFE', 'AMC', 'AMZN', 'MSFT', 'BA', 'NVDA', 'AMD', 'SPCE'];
-
-
-	const handleSelect = async (e) => {
-		let dataArr = [];
+	const selectStock = async (e) => {
 		setsymbol(e.target.value);
-		let response = await fetch(`${url}/shareprice?symbol=${e.target.value}`);
-		if (!response.ok) {
-			throw new Error(`HTTP error! status: ${response.status}`);
+		try {
+			const response = await fetch(`${baseURL}/shareprice?symbol=${e.target.value}`);
+			if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+			const { message: { price, price_alarm, hData } } = await response.json();
+			setprice(+price);
+			setpriceAlarm(+price_alarm || null)
+			setpastData(formatData(hData));
+		} catch (error) {
+			console.log(error);
 		}
-		let data = await response.json();
-		console.log(data);
-		dataArr = data['message']['hData'];
-		setprice(data['message']['price']);
-		if (data['message']['price_alarm'] === "null")
-			setpriceAlarm(null);
-		else
-			setpriceAlarm(data['message']['price_alarm'])
-		
-		let formattedData = formatData(dataArr);
-		setpastData(formattedData);
 	};
 
 	return (
 		<div className="container">
 			{
-				<select name="currency" defaultValue="" onChange={handleSelect}>
-					<option value="" selected disabled hidden>Choose here</option>
-					{stocks.map((symbol, i) => {
+				<select name="currency" defaultValue="" onChange={selectStock}>
+					<option value="" disabled hidden>Choose here</option>
+					{STOCKS.map((symbol, i) => {
 						return (
 							<option key={i} value={symbol}>
 								{symbol}
