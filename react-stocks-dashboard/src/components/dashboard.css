@@ -28,6 +28,15 @@
     color: red;
     margin-left: 15px;
     font-size: 13px;
+    margin-top: 4px;
+}
+
+.submittedLabel {
+    position: fixed;
+    color: #379600;
+    margin-left: 15px;
+    font-size: 13px;
+    margin-top: 4px;
 }
 
 .infoLabel {

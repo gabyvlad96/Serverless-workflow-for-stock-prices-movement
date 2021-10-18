@@ -1,61 +1,65 @@
 import React, { useState, useEffect } from "react";
 import { Line } from "react-chartjs-2";
 import Switch from "react-switch";
+import { baseURL } from "../config/const";
 import "./dashboard.css";
+
+const REQUEST_OPTIONS = {
+	method: 'POST',
+	headers: { 'Content-Type': 'application/json' }
+};
+const LINE_OPTIONS = {
+	tooltips: {
+		intersect: false,
+		mode: "index"
+	},
+	responsive: true,
+	maintainAspectRatio: false
+};
 
 function Dashboard({symbol, price, priceAlarm, data}) {
 	const [priceValue, setpriceValue] = useState("");
 	const [checked, setChecked] = useState(false);
 	const [inputValue, setinputValue] = useState("");
 	const [validInput, setvalidInput] = useState(true);
+	const [sumbitted, setSubmitted] = useState(false);
 
 	useEffect(() => {
+		setSubmitted(false);
+		setvalidInput(true);
 		setpriceValue(price);
 		setinputValue(priceAlarm? priceAlarm : "");
 		setChecked(priceAlarm? true : false)
 	  }, [priceAlarm, price]);
 
-	const url = "API_GATEWAY_ENDPOINT";
-	const opts = {
-		tooltips: {
-			intersect: false,
-			mode: "index"
-		},
-		responsive: true,
-		maintainAspectRatio: false
-	};
-
-	const onSwitchChange = async (e) => {
+	const onSwitchToggle = async (value) => {
 		setChecked(!checked);
-		if (!e) {
-			const requestOptions = {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-			};
-			fetch(`${url}/updatealarm/turnoff?symbol=${symbol}`, requestOptions)
-				.then(response => response.json())
-				.then(data => {
-					console.log(data)
-				});
+		if (!value) turnOffAlarm();
+	}
+
+	const turnOffAlarm = () => {
+		setSubmitted(false);
+		try {
+			fetch(`${baseURL}/updatealarm/turnoff?symbol=${symbol}`, REQUEST_OPTIONS)
+		} catch (error) {
+			console.log(error);
 		}
 	}
 
-	const submitValue = (e) => {
+	const submitNewPriceAlarm = async () => {
 		if (isNaN(inputValue)) {
 			setvalidInput(false);
-			return
+			setSubmitted(false);
+			return;
 		} else {
 			setvalidInput(true);
 		}
-		const requestOptions = {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-		};
-		fetch(`${url}/updatealarm?symbol=${symbol}&price=${inputValue}`, requestOptions)
-			.then(response => response.json())
-			.then(data => {
-				console.log(data)
-			});
+		try {
+			const response = await fetch(`${baseURL}/updatealarm?symbol=${symbol}&price=${inputValue}`, REQUEST_OPTIONS)
+			if (response.ok) setSubmitted(true);
+		} catch (error) {
+			console.log(error);
+		}
 	}
 
 	return (
@@ -64,7 +68,7 @@ function Dashboard({symbol, price, priceAlarm, data}) {
 			<div className="notificationPanel">
 				<div className="labelAndSwitch">
 					<span>Notify on price change</span>
-					<Switch height={20} width={50} onChange={onSwitchChange} checked={checked} />
+					<Switch height={20} width={50} onChange={onSwitchToggle} checked={checked} />
 				</div>
 				{checked &&
 					<>
@@ -74,14 +78,17 @@ function Dashboard({symbol, price, priceAlarm, data}) {
 						{!validInput &&
 							<label className="invalidLabel">Only numeric values are allowed</label>
 						}
+						{sumbitted && 
+							<label className="submittedLabel">New price alarm set</label>
+						}
 					</div>
 					<label className="infoLabel">Due to AWS SES limitations, only verified email addresses can receive notifications</label>
-					<button onClick={submitValue}>Submit</button>
+					<button onClick={submitNewPriceAlarm}>Submit</button>
 					</>
 				}
 			</div>
 			<div className="chart-container">
-				<Line data={data} options={opts} />
+				<Line data={data} options={LINE_OPTIONS} />
 			</div>
 		</div>
 	);

@@ -13,11 +13,11 @@ export const formatData = (data) => {
     };
 
     let dates = data.map((val) => {
-      return val['date'];
+      return val.date.substr(val.date.length - 5);
     });
 
     let priceArr = data.map((val) => {
-      return val['close'];
+      return val.close;
     });
   
     priceArr.reverse();
